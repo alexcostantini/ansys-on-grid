@@ -1,0 +1,1225 @@
+!---------1----------2----------3----------4----------5----------6----------7----------8----------9----------10
+
+
+   !-----------------------------------------------------------------
+   !author: Eng. Mattia Manzolaro
+   !National Institute of Nuclear Physics
+   !Legnaro National Laboratories
+   !Viale dell'Universita' n. 2; 35020 Legnaro (PD) - Italy
+   !phone: +39 049 8068331
+   !fax: +39 049 641925
+   !e-mail: Mattia.Manzolaro@lnl.infn.it 
+   !------------------------------------------------------------------------------------------
+   !date - 06/05/2010
+   !
+   !VERSION_A: all components included, full version
+   /PREP7                   !enters the model creation preprocessor
+   !------------------------------------------------------------------------------------------
+   !MAIN_SCALAR_PARAMETER
+   Tconstr=25               !temperature constraint [°C]
+   FINISH                   !exits normally from a processor
+   ! 
+   !------------------------------------------------------------------------------------------
+
+   !called macros in this command file:
+   !"M26Ta.mac"
+   !"M27W.mac"
+   !"M28Cu.mac"
+   !"M29C_ATJ.mac"
+   !"M30Mo.mac"
+
+   !---select a title for the analysis---
+   /TITLE,SPES "Production Target - Surface Ion Source" assembly
+ 
+   /CONFIG,NRES,100000      !assigns values to ANSYS configuration parameters  
+   /PREP7                   !enters the model creation preprocessor
+
+
+
+   !c: material properties definition by APDL commands
+
+   !---Uranium Carbide UCx---
+   UCx=1	
+   MP,DENS,UCx,2500	    !density [kg/m^3]
+   MP,C,UCx,220	            !specific heat [J/kg K]
+   MP,KXX,UCx,6	            !thermal conductivity [W/m K]
+   MP,EMIS,UCx,0.8	    !emissivity (at T=2000°C)
+
+
+   !c: material properties definition by macros
+
+   !c: Al5083
+   *USE,M23Al5083.mac        !calls the macro
+
+   !c: Ta
+   *USE,M26Ta.mac            !calls the macro
+
+   !c: W
+   *USE,M27W.mac             !calls the macro
+
+   !c: Cu
+   *USE,M28Cu.mac            !calls the macro
+
+   !c: C_ATJ
+   *USE,M29C_ATJ.mac         !calls the macro
+
+   !c: Mo
+   *USE,M30Mo.mac            !calls the macro
+
+
+!----------------------------------------------------------------
+!----------------------------------------------------------------
+!c: FE MODEL CONSTRUCTION	
+!----------------------------------------------------------------
+!----------------------------------------------------------------
+
+   !c: element type
+   ET,1,SOLID70     !defines a local element type (thermal)
+   ET,2,SOLID69     !defines a local element type (electrical-thermal)
+
+   !c: geometry import
+
+   FINISH           !exits normally from a processor
+   /AUX15           !enters the IGES file transfer processor
+
+   IOPTN,IGES,NODEFEAT   !controls options relating to importing a model
+   IOPTN,MERGE,YES       !controls options relating to importing a model
+   IOPTN,SOLID,YES       !controls options relating to importing a model
+   IOPTN,SMALL,YES       !controls options relating to importing a model
+   IOPTN,GTOLER,0.00001  !controls options relating to importing a model
+
+
+
+   !c: main_plate import 
+   IGESIN,'main_plate','igs'                 !transfers IGES data from a file into ANSYS
+
+   !c: target_main_clamp import 
+   IGESIN,'target_main_clamp','igs'          !transfers IGES data from a file into ANSYS
+
+   !c: target_main_clamp_cpy_1 import 
+   IGESIN,'target_main_clamp_cpy_1','igs'    !transfers IGES data from a file into ANSYS
+
+   !c: ion-source_main_clamp import 
+   IGESIN,'ion-source_main_clamp','igs'      !transfers IGES data from a file into ANSYS
+
+   !c: is_screen import 
+   IGESIN,'is_screen','igs'                  !transfers IGES data from a file into ANSYS
+
+   !c: is_support import 
+   IGESIN,'is_support','igs'                 !transfers IGES data from a file into ANSYS
+
+   !c: is_hot_cavity import 
+   IGESIN,'is_hot_cavity','igs'              !transfers IGES data from a file into ANSYS
+
+   !c: is_bush import 
+   IGESIN,'is_bush','igs'                    !transfers IGES data from a file into ANSYS
+
+   !c: target_heater import 
+   IGESIN,'target_heater','igs'              !transfers IGES data from a file into ANSYS
+
+   !c: target_clamp_right import 
+   IGESIN,'target_clamp_right','igs'         !transfers IGES data from a file into ANSYS
+
+   !c: target_clamp_left import 
+   IGESIN,'target_clamp_left','igs'          !transfers IGES data from a file into ANSYS
+
+   !c: transfer_line import 
+   IGESIN,'transfer_line','igs'              !transfers IGES data from a file into ANSYS
+
+   !c: electrical_connection import 
+   IGESIN,'electrical_connection','igs'      !transfers IGES data from a file into ANSYS
+
+   !c: electrical_conn_support import   
+   IGESIN,'electrical_conn_support','igs'    !transfers IGES data from a file into ANSYS
+
+   !c: ion_source_clamp import   
+   IGESIN,'ion_source_clamp','igs'           !transfers IGES data from a file into ANSYS
+
+   !c: cover import   
+   IGESIN,'cover','igs'                      !transfers IGES data from a file into ANSYS
+
+
+   FINISH           !exits normally from a processor
+
+   /PREP7           !enters the model creation preprocessor 
+
+
+
+   !c: thermal contact effects are not considered
+   !c: all the components are considered welded
+
+   !c: gluing of volumes
+
+   VGLUE,ALL               !generates new volumes by "gluing" volumes
+
+   NUMCMP,VOLU             !compressed entity number
+   NUMCMP,AREA
+   NUMCMP,LINE
+   NUMCMP,KP
+
+
+
+
+
+
+
+
+
+
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  SPES TARGET +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   !c: geometry (Graphite box, windows and dumpers) import
+
+   FINISH           !exits normally from a processor
+   /AUX15           !enters the IGES file transfer processor
+
+   IOPTN,IGES,NODEFEAT   !controls options relating to importing a model
+   IOPTN,MERGE,YES       !controls options relating to importing a model
+   IOPTN,SOLID,YES       !controls options relating to importing a model
+   IOPTN,SMALL,YES       !controls options relating to importing a model
+   IOPTN,GTOLER,0.00001  !controls options relating to importing a model
+
+   !c: box_1 import 
+   IGESIN,'box_1','igs'             !transfers IGES data from a file into ANSYS
+
+   !c: box_2 import 
+   IGESIN,'box_2','igs'             !transfers IGES data from a file into ANSYS
+
+   !c: box_3 import 
+   IGESIN,'box_3','igs'             !transfers IGES data from a file into ANSYS
+
+   !c: window import 
+   IGESIN,'window','igs'            !transfers IGES data from a file into ANSYS
+
+   !c: window_cpy_1 import 
+   IGESIN,'window_cpy_1','igs'      !transfers IGES data from a file into ANSYS
+
+   !c: dumper_0-8 import 
+   IGESIN,'dumper_0-8','igs'        !transfers IGES data from a file into ANSYS
+
+   !c: dumper_0-8_cpy_1 import 
+   IGESIN,'dumper_0-8_cpy_1','igs'  !transfers IGES data from a file into ANSYS
+
+   !c: dumper_1-0 import 
+   IGESIN,'dumper_1-0','igs'        !transfers IGES data from a file into ANSYS
+
+   !c: dumper_10-0 import 
+   IGESIN,'dumper_10-0','igs'       !transfers IGES data from a file into ANSYS
+
+   FINISH           !exits normally from a processor
+
+   /PREP7           !enters the model creation preprocessor 
+
+   !c: gluing of volumes related to the objects made of Graphite
+
+   VSEL,S,,,17              !selects a subset of volumes
+   VSEL,A,,,18              !selects a subset of volumes
+   VSEL,A,,,19              !selects a subset of volumes
+   VSEL,A,,,20              !selects a subset of volumes
+   VSEL,A,,,21              !selects a subset of volumes
+   VSEL,A,,,22              !selects a subset of volumes
+   VSEL,A,,,23              !selects a subset of volumes
+   VSEL,A,,,24              !selects a subset of volumes
+   VSEL,A,,,25              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+
+   VGLUE,ALL               !generates new volumes by "gluing" volumes
+
+   NUMCMP,VOLU             !compressed entity number
+   NUMCMP,AREA
+   NUMCMP,LINE
+   NUMCMP,KP
+
+   !c: geometry (UCx disks) import
+
+   FINISH           !exits normally from a processor
+   /AUX15           !enters the IGES file transfer processor
+
+   IOPTN,IGES,NODEFEAT   !controls options relating to importing a model
+   IOPTN,MERGE,YES       !controls options relating to importing a model
+   IOPTN,SOLID,YES       !controls options relating to importing a model
+   IOPTN,SMALL,YES       !controls options relating to importing a model
+   IOPTN,GTOLER,0.00001  !controls options relating to importing a model
+
+   !c: disk import 
+   IGESIN,'disk','igs'                !transfers IGES data from a file into ANSYS
+
+   !c: disk_cpy_1 import 
+   IGESIN,'disk_cpy_1','igs'          !transfers IGES data from a file into ANSYS
+
+   !c: disk_cpy_2 import 
+   IGESIN,'disk_cpy_2','igs'          !transfers IGES data from a file into ANSYS
+
+   !c: disk_cpy_3 import 
+   IGESIN,'disk_cpy_3','igs'          !transfers IGES data from a file into ANSYS
+
+   !c: disk_cpy_4 import 
+   IGESIN,'disk_cpy_4','igs'          !transfers IGES data from a file into ANSYS
+
+   !c: disk_cpy_5 import 
+   IGESIN,'disk_cpy_5','igs'          !transfers IGES data from a file into ANSYS
+
+   !c: disk_cpy_6 import 
+   IGESIN,'disk_cpy_6','igs'          !transfers IGES data from a file into ANSYS
+
+   FINISH           !exits normally from a processor
+
+   /PREP7           !enters the model creation preprocessor 
+
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  SPES TARGET +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
+
+
+
+
+
+   !c: VOLUME SCALING [from "mm" to "m"]
+   ALLSEL                                     !selects all entities with a single command  
+   VLSCALE,ALL,,,0.001,0.001,0.001,,0,1       !generates a scaled set of volumes from a pattern of volumes
+   !c: VOLUME SCALING [from "mm" to "m"]
+
+
+
+   !c: Volume MESHING
+
+
+   !c: target_main_clamp MESH (Cu, thermal-electric-SOLID69)
+
+   MAT,Cu                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,7               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: target_main_clamp_cpy_1 MESH (Cu, thermal-electric-SOLID69)
+
+   MAT,Cu                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,8               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: ion-source_main_clamp MESH (Cu, thermal-electric-SOLID69) 
+
+   MAT,Cu                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,6               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: is_screen MESH (Ta, thermal-electric-SOLID69)
+
+   MAT,Ta                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,16              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0040        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: is_support MESH (Ta, thermal-electric-SOLID69)
+
+   MAT,Ta                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,15              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0022        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: is_hot_cavity MESH (W, thermal-electric-SOLID69)
+
+   MAT,W                    !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,12              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0012        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: is_bush MESH (Ta, thermal-electric-SOLID69)
+
+   MAT,Ta                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,9               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0018        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: target_heater MESH (Ta, thermal-electric-SOLID69)
+
+   MAT,Ta                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,1               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0045        !specifies the element size to be meshed onto areas
+
+   LSEL,S,,,452,453,1
+   LSEL,A,,,458,459,1
+   LSEL,A,,,461,461,1
+   LSEL,A,,,463,466,1
+   LSEL,A,,,468,470,1
+
+   LESIZE,ALL,,,8
+
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: target_clamp_right MESH (Cu, thermal-electric-SOLID69)
+
+   MAT,Cu                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,10              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: target_clamp_left MESH (Cu, thermal-electric-SOLID69)
+
+   MAT,Cu                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,11              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: transfer_line MESH (Ta, thermal-electric-SOLID69)
+
+   MAT,Ta                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,13              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0022        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: electrical_connection MESH (Ta, thermal-electric-SOLID69)
+
+   MAT,Ta                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,14              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0026        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: electrical_conn_support MESH (Ta, thermal-electric-SOLID69)
+
+   MAT,Ta                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,3               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0035        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: ion_source_clamp MESH (Cu, thermal-electric-SOLID69)   
+
+   MAT,Cu                   !sets the element material attribute pointer
+   TYPE,2                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,4               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: main_plate MESH (Al5083, thermal-SOLID70)
+
+   MAT,Al5083               !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,5               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.025         !specifies the element size to be meshed onto areas
+
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command
+
+
+   !c: cover MESH (Al5083, thermal-SOLID70)  
+
+   MAT,Al5083               !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,2               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.025         !specifies the element size to be meshed onto areas
+   AESIZE,242,0.015         !specifies the element size to be meshed onto areas
+   AESIZE,243,0.015         !specifies the element size to be meshed onto areas
+   AESIZE,254,0.015         !specifies the element size to be meshed onto areas
+   AESIZE,255,0.015         !specifies the element size to be meshed onto areas
+
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command
+
+
+
+   !c: RADIATING SURFACES ENCLOSURE-1 (principale)
+
+   !c: main_plate Radiating Surfaces 
+   ASEL,S,AREA,,234,234,1
+   SFA,ALL,,RDSF,0.10,1               !specifies surface loads on the selected areas
+   ALLSEL                             !selects all entities with a single command
+
+   !c: cover Radiating Surfaces
+   ASEL,S,AREA,,242,255,1
+   SFA,ALL,,RDSF,0.10,1               !specifies surface loads on the selected areas
+   ALLSEL                             !selects all entities with a single command
+
+   !c: target_main_clamp & target_main_clamp_cpy_1 Radiating Surfaces
+   VSEL,S,,,7               !selects a subset of volumes
+   VSEL,A,,,8               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,11,11,1
+   ASEL,U,AREA,,13,16,1
+   ASEL,U,AREA,,18,20,1
+   ASEL,U,AREA,,257,260,1
+   ASEL,U,AREA,,265,268,1
+   SFA,ALL,,RDSF,-Cu,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: ion-source_main_clamp Radiating Surfaces
+   VSEL,S,,,6               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,4,6,1
+   ASEL,U,AREA,,21,21,1
+   ASEL,U,AREA,,23,25,1
+   SFA,ALL,,RDSF,-Cu,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: is_screen Radiating Surfaces
+   VSEL,S,,,16              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,31,32,1
+   ASEL,U,AREA,,86,86,1
+   ASEL,U,AREA,,106,106,1
+   ASEL,U,AREA,,227,227,1
+   ASEL,U,AREA,,231,231,1
+   SFA,ALL,,RDSF,-Ta,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: is_support Radiating Surfaces
+   VSEL,S,,,15              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,86,86,1
+   ASEL,U,AREA,,106,106,1
+   ASEL,U,AREA,,291,294,1
+   ASEL,U,AREA,,298,298,1
+   SFA,ALL,,RDSF,-Ta,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: is_hot_cavity Radiating Surfaces
+   VSEL,S,,,12              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,277,280,1
+   ASEL,U,AREA,,291,294,1
+   ASEL,U,AREA,,298,298,1
+   SFA,ALL,,RDSF,-W,1       !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: is_bush Radiating Surfaces
+   VSEL,S,,,9               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,275,280,1
+   SFA,ALL,,RDSF,-Ta,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: target_heater Radiating Surfaces
+   VSEL,S,,,1               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,147,147,1
+   ASEL,U,AREA,,160,160,1
+   ASEL,U,AREA,,188,188,1
+   SFA,ALL,,RDSF,-Ta,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: target_clamp_right and target_clamp_left Radiating Surfaces
+   VSEL,S,,,10              !selects a subset of volumes
+   VSEL,A,,,11              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,160,160,1
+   ASEL,U,AREA,,188,188,1
+   ASEL,U,AREA,,257,260,1
+   ASEL,U,AREA,,265,268,1
+   SFA,ALL,,RDSF,-Cu,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: transfer_line Radiating Surfaces
+   VSEL,S,,,13              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,147,147,1
+   ASEL,U,AREA,,275,276,1
+   ASEL,U,AREA,,300,301,1
+   ASEL,U,AREA,,307,307,1
+   SFA,ALL,,RDSF,-Ta,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: electrical_connection Radiating Surfaces
+   VSEL,S,,,14              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,151,154,1
+   ASEL,U,AREA,,300,301,1
+   ASEL,U,AREA,,307,307,1
+   SFA,ALL,,RDSF,-Ta,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: electrical_conn_support Radiating Surfaces
+   VSEL,S,,,3               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,151,155,1
+   ASEL,U,AREA,,228,228,1
+   SFA,ALL,,RDSF,-Ta,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+   !c: ion_source_clamp Radiating Surfaces
+   VSEL,S,,,4               !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   ASEL,U,AREA,,4,6,1
+   ASEL,U,AREA,,155,155,1
+   ASEL,U,AREA,,228,228,1
+   SFA,ALL,,RDSF,-Cu,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+
+
+
+
+
+
+
+
+
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  SPES TARGET +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   !c: Volume MESHING
+
+
+   !c: window import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,19              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0033        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command
+
+
+   !c: window_cpy_1 import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,18              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0033        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command
+
+
+   !c: box_1 MESH (C_ATJ, thermal-SOLID70)
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,24              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: box_2 import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,17              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL                   !selects all entities with a single command  
+
+
+   !c: box_3 import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,25              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: dumper_0-8 import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,20              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: dumper_0-8_cpy_1 import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,21              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: dumper_1-0 import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,22              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: dumper_10-0 import 
+
+   MAT,C_ATJ                !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,23              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: disk import 
+
+   MAT,UCx                  !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,26              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: disk_cpy_1 import 
+
+   MAT,UCx                  !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,27              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: disk_cpy_2 import 
+
+   MAT,UCx                  !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,28              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: disk_cpy_3 import 
+
+   MAT,UCx                  !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,29              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: disk_cpy_4 import 
+
+   MAT,UCx                  !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,30              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: disk_cpy_5 import 
+
+   MAT,UCx                  !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,31              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+   !c: disk_cpy_6 import 
+
+   MAT,UCx                  !sets the element material attribute pointer
+   TYPE,1                   !sets the element type attribute pointer
+
+   MSHAPE,1,3D              !for elements that support multiple shapes, specifies the element shape
+                            !to be used for meshing
+   MSHKEY,0                 !specifies whether free meshing or mapped meshing should be used to mesh a model
+
+   VSEL,S,,,32              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   AESIZE,ALL,0.0050        !specifies the element size to be meshed onto areas
+   VMESH,ALL                !generates nodes and volume elements within volumes
+   ALLSEL  
+
+
+
+   !c: RADIATING SURFACES ENCLOSURE-1 -open enclosure- (principale)
+
+   !c: Graphite components Radiating Surfaces
+   ASEL,S,AREA,,338,343,1
+   ASEL,A,AREA,,345,346,1
+   ASEL,A,AREA,,348,352,1
+   ASEL,A,AREA,,355,356,1
+   ASEL,A,AREA,,363,363,1
+   ASEL,A,AREA,,372,373,1
+   ASEL,A,AREA,,376,378,1
+   ASEL,A,AREA,,385,385,1
+   SFA,ALL,,RDSF,-C_ATJ,1             !specifies surface loads on the selected areas
+   ALLSEL                             !selects all entities with a single command
+
+   !c: UCx disks Radiating Surfaces
+   VSEL,S,,,26              !selects a subset of volumes
+   VSEL,A,,,27              !selects a subset of volumes
+   VSEL,A,,,28              !selects a subset of volumes
+   VSEL,A,,,29              !selects a subset of volumes
+   VSEL,A,,,30              !selects a subset of volumes
+   VSEL,A,,,31              !selects a subset of volumes
+   VSEL,A,,,32              !selects a subset of volumes
+   ALLSEL,BELOW,VOLU        !selects all entities with a single command
+   SFA,ALL,,RDSF,0.8,1      !specifies surface loads on the selected areas
+   ALLSEL                   !selects all entities with a single command
+
+
+
+   !c: RADIATING SURFACES ENCLOSURE-2 -closed enclosure- (window_zone)
+
+   !c: Graphite components Radiating Surfaces
+   ASEL,S,AREA,,353,354,1
+   ASEL,A,AREA,,374,375,1
+   SFA,ALL,,RDSF,-C_ATJ,2             !specifies surface loads on the selected areas
+   ALLSEL                             !selects all entities with a single command
+
+
+
+   !c: RADIATING SURFACES ENCLOSURE-3 -closed enclosure- (dumper_zone_1)
+
+   !c: Graphite components Radiating Surfaces
+   ASEL,S,AREA,,357,358,1
+   ASEL,A,AREA,,379,380,1
+   SFA,ALL,,RDSF,-C_ATJ,3             !specifies surface loads on the selected areas
+   ALLSEL                             !selects all entities with a single command
+
+
+
+   !c: RADIATING SURFACES ENCLOSURE-4 -closed enclosure- (dumper_zone_2)
+
+   !c: Graphite components Radiating Surfaces
+   ASEL,S,AREA,,359,360,1
+   ASEL,A,AREA,,381,382,1
+   SFA,ALL,,RDSF,-C_ATJ,4             !specifies surface loads on the selected areas
+   ALLSEL                             !selects all entities with a single command
+
+
+
+   !c: RADIATING SURFACES ENCLOSURE-5 -closed enclosure- (dumper_zone_3)
+
+   !c: Graphite components Radiating Surfaces
+   ASEL,S,AREA,,361,362,1
+   ASEL,A,AREA,,383,384,1
+   SFA,ALL,,RDSF,-C_ATJ,5             !specifies surface loads on the selected areas
+   ALLSEL                             !selects all entities with a single command
+
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  SPES TARGET +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+!  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
+
+
+
+
+
+   !c: thermal initial conditions
+   TUNIF,Tconstr          !assigns a uniform temperature to all nodes [°C]
+
+   !c: main_plate and cover temperature DOF constraint
+   DA,7,TEMP,Tconstr       !defines DOF constraints on areas [°C]
+   DA,8,TEMP,Tconstr       !defines DOF constraints on areas [°C]
+   DA,9,TEMP,Tconstr       !defines DOF constraints on areas [°C]
+   DA,238,TEMP,Tconstr     !defines DOF constraints on areas [°C]
+   DA,240,TEMP,Tconstr     !defines DOF constraints on areas [°C]
+   DA,241,TEMP,Tconstr     !defines DOF constraints on areas [°C]
+
+   !c: target_main_clamps temperature DOF constraint
+   DA,13,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+   DA,14,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+   DA,15,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+   DA,18,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+   DA,19,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+   DA,20,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+
+   !c: ion-source_main_clamps temperature DOF constraint
+   DA,23,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+   DA,24,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+   DA,25,TEMP,Tconstr      !defines DOF constraints on areas [°C]
+
+   !c: Ta heater's tip voltage DOF constraint
+   DA,31,VOLT,0            !defines DOF constraints on areas [V]
+   DA,32,VOLT,0            !defines DOF constraints on areas [V]
+   DA,227,VOLT,0           !defines DOF constraints on areas [V]
+   DA,231,VOLT,0           !defines DOF constraints on areas [V]
+
+
+
+   !****************************************************
+   !***parameter "I_HEATER_IN" (heater current - A -)***
+
+   *DIM,I_HEATER_IN,TABLE,8,1,1,TIME
+
+   *SET,I_HEATER_IN(1,0),0           ! TIME [s]
+   *SET,I_HEATER_IN(1,1),0           ! I_HEATER [A]
+
+   *SET,I_HEATER_IN(2,0),20000
+   *SET,I_HEATER_IN(2,1),0
+
+   *SET,I_HEATER_IN(3,0),20001
+   *SET,I_HEATER_IN(3,1),500
+
+   *SET,I_HEATER_IN(4,0),30000
+   *SET,I_HEATER_IN(4,1),500
+
+   *SET,I_HEATER_IN(5,0),30001
+   *SET,I_HEATER_IN(5,1),800
+
+   *SET,I_HEATER_IN(6,0),40000
+   *SET,I_HEATER_IN(6,1),800
+
+   *SET,I_HEATER_IN(7,0),40001
+   *SET,I_HEATER_IN(7,1),1200
+
+   *SET,I_HEATER_IN(8,0),50000
+   *SET,I_HEATER_IN(8,1),1200
+
+   !*************************************************
+
+   !c: power generation - Joule effect / "I_HEATER_IN" (ingresso corrente)
+   ASEL,S,AREA,,11,11         !selects a subset of areas
+   ALLSEL,BELOW,AREA
+   NSLA,S,1                   !selects those nodes associated with the selected areas
+   CP,1,VOLT,ALL              !defines (or modifies) a set of coupled degrees of freedom
+   ni=kpnext(0)               !c: master node definition
+   FK,ni,AMPS,%I_HEATER_IN%    !specifies force loads at nodes
+   ALLSEL                     !selects all entities with a single command   
+
+
+
+   !*****************************************************
+   !***parameter "I_HEATER_OUT" (heater current - A -)***
+
+   *DIM,I_HEATER_OUT,TABLE,8,1,1,TIME
+
+   *SET,I_HEATER_IN(1,0),0           ! TIME [s]
+   *SET,I_HEATER_IN(1,1),0           ! I_HEATER [A]
+
+   *SET,I_HEATER_IN(2,0),20000
+   *SET,I_HEATER_IN(2,1),0
+
+   *SET,I_HEATER_IN(3,0),20001
+   *SET,I_HEATER_IN(3,1),-500
+
+   *SET,I_HEATER_IN(4,0),30000
+   *SET,I_HEATER_IN(4,1),-500
+
+   *SET,I_HEATER_IN(5,0),30001
+   *SET,I_HEATER_IN(5,1),-800
+
+   *SET,I_HEATER_IN(6,0),40000
+   *SET,I_HEATER_IN(6,1),-800
+
+   *SET,I_HEATER_IN(7,0),40001
+   *SET,I_HEATER_IN(7,1),-1200
+
+   *SET,I_HEATER_IN(8,0),50000
+   *SET,I_HEATER_IN(8,1),-1200
+
+   !*************************************************
+
+   !c: power generation - Joule effect / "I_HEATER" (uscita corrente)
+   ASEL,S,AREA,,16,16          !selects a subset of areas
+   ALLSEL,BELOW,AREA
+   NSLA,S,1                    !selects those nodes associated with the selected areas
+   CP,2,VOLT,ALL               !defines (or modifies) a set of coupled degrees of freedom
+   ni=kpnext(0)                !c: master node definition
+   FK,ni,AMPS,%I_HEATER_OUT%    !specifies force loads at nodes
+   ALLSEL                      !selects all entities with a single command   
+
+
+
+   !*************************************************
+   !***parameter "I_LINE" (line current - A -)    ***
+
+   *DIM,I_LINE,TABLE,4,1,1,TIME
+
+   *SET,I_LINE(1,0),0           ! TIME [s]
+   *SET,I_LINE(1,1),200         ! I_LINE [A]
+
+   *SET,I_LINE(2,0),10000
+   *SET,I_LINE(2,1),200
+
+   *SET,I_LINE(3,0),10001
+   *SET,I_LINE(3,1),400
+
+   *SET,I_LINE(4,0),50000
+   *SET,I_LINE(4,1),400
+
+   !*************************************************
+
+   !c: power generation - Joule effect / "I_LINE"
+   ASEL,S,AREA,,21,21      !selects a subset of areas
+   ALLSEL,BELOW,AREA
+   NSLA,S,1                !selects those nodes associated with the selected areas
+   CP,3,VOLT,all           !defines (or modifies) a set of coupled degrees of freedom
+   ni=kpnext(0)            !c: master node definition
+   FK,ni,AMPS,%I_LINE%      !specifies force loads at nodes
+   ALLSEL                  !selects all entities with a single command
+
+
+
+
+
+   !c: OPTIONS
+
+   !c: SPACE Temperature definition (ENCLOSURE_1 = open enclosure)
+   SPCTEMP,1,Tconstr	               !defines a free-space ambient temperature for radiation using the Radiosity method [°C]
+
+   !c: defining Solution Options
+   STEF,5.67e-8                        !specifies Stefan-Boltzmann radiation constant [W/(m^2*K^4)]
+   RADOPT,0.5,0.006,,5000              !specifies Gauss-Seidel Radiosity Solver options
+   TOFFST,273.15                       !specifies the temperature offset from absolute zero to zero [°C]
+           
+   !c: defining View Factor Options
+   HEMIOPT,100                         !specifies options for Hemicube view factor calculation
+   VFOPT,OFF                           !specifies options for view factor file
+
+   FINISH                              !exits normally from a processor
+
+
+
+
+
+   !c: SOLVER
+   /SOLU                         !enters the solution processor
+   SOLCONTROL,ON                 !specifies whether to use optimized nonlinear solution defaults
+                                 !and some enhanced internal solution algorithms   
+   ANTYPE,TRANS                  !specifies the analysis type and restart status
+   AUTOTS,ON	                 !use automatic time stepping 
+   KBC,1                         !specifies stepped or ramped loading within a load step
+   DELTIM,0.0001,0.00005,100     !specifies the time step sizes to be used for this load step      
+   OUTRES,NSOL,ALL               !controls the solution data written to the database                   
+   TIME,23000                    !sets the time for a load step
+SAVE
+   SOLVE                         !starts a solution
+   SAVE,,,,ALL                   !saves all current database information
+   FINISH                        !exits normally from a processor
